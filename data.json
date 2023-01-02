@@ -1,0 +1,20 @@
+{
+  "persons": [
+    {
+      "name": "Jack",
+      "timezone": -5
+    },
+    {
+      "name": "VoVa Son",
+      "timezone": 2
+    },
+    {
+      "name": "Thailand",
+      "timezone": 8
+    },
+    {
+      "name": "Dev team",
+      "timezone": 3
+    }
+  ]
+}
