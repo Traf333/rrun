@@ -9,7 +9,12 @@ use serde_json::from_str;
 use std::num::ParseIntError;
 
 mod timediff;
+
 use crate::timediff::show_time;
+
+mod database;
+
+use crate::database::read_data;
 
 #[derive(Parser, Debug)]
 struct Args {
@@ -55,6 +60,7 @@ fn main() {
             let (hour, minutes) = split_and_parse(args.pattern.as_str()).unwrap();
             show_time(hour, minutes);
         }
+        "show_data" => { read_data() }
         _ => println!("No command has found with name {}", args.command)
     }
 }
