@@ -1,42 +1,44 @@
-use chrono::{DateTime, FixedOffset, Local, Utc, TimeZone, NaiveTime};
+use chrono::{DateTime, FixedOffset, Local, Utc, TimeZone, NaiveTime, Duration};
 use chrono::format::ParseError;
 use chrono::format::StrftimeItems;
 
-pub fn show_time(pattern: &str) {
+fn format_line(label: &str, time: String, timezone: String) {
+    println!(" {: <20} | {: <20} | {: <10}", label, time, timezone);
+    divider();
+}
+
+fn divider() {
+    println!("{}", (0..46).map(|_| "-").collect::<String>());
+}
+
+pub fn show_time(hours: u32, minutes: u32) {
     let local_time = Local::now();
     let list = [("Jack", -5), ("Son", 1), ("Dev team", 3)];
 
-    println!("{}", (0..46).map(|_| "-").collect::<String>());
+    format_line("Who", "time".to_string(), "timezone".to_string());
 
-    println!(
-        " {: <10} | {: <20} | {: <10}",
-        "Who", "time", "timezone"
+    #[allow(deprecated)]
+    let shifted_time = Local::today().and_hms_opt(hours, minutes, 0).unwrap();
+
+    format_line(
+        "Local Time",
+        local_time.format_with_items(StrftimeItems::new("%Y-%m-%d %H:%M")).to_string(),
+        local_time.offset().to_string(),
     );
-    println!("{}", (0..46).map(|_| "-").collect::<String>());
-
-    println!(
-        " {: <10} | {: <20} | {: <10}",
-        "Me",
-        local_time.format_with_items(StrftimeItems::new("%Y-%m-%d %H:%M")),
-        local_time.offset()
+    format_line(
+        "Planned Time",
+        shifted_time.format_with_items(StrftimeItems::new("%Y-%m-%d %H:%M")).to_string(),
+        local_time.offset().to_string(),
     );
 
     for (name, zone) in list {
         let offset = FixedOffset::east_opt(zone * 3600).unwrap();
-        let some_time = local_time.with_timezone(&offset);
+        let some_time = shifted_time.with_timezone(&offset);
 
-        println!(" {: <10} | {: <20} | {: <10}",
-                 name,
-                 some_time.format_with_items(StrftimeItems::new("%Y-%m-%d %H:%M")),
-                 offset
+        format_line(
+            name,
+            some_time.format_with_items(StrftimeItems::new("%H:%M")).to_string(),
+            offset.to_string(),
         );
     }
-
-    // let time_only = DateTime::<Utc>::parse_from_str(pattern, "%H:%M").unwrap();
-
-    // let expected_time = Utc::now().add_hours(3);
-    // let duration = expected_time - utc_time;
-    // dbg!(duration.num_minutes());
-    // dbg!(lwith_tz.format_with_items(fmt).to_string());
-    // dbg!(expected_time.with_timezone(&rio_timezone).format_with_items(fmt).to_string());
 }

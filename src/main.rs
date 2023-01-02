@@ -6,6 +6,7 @@ use clap::Parser;
 
 use std::fs;
 use serde_json::from_str;
+use std::num::ParseIntError;
 
 mod timediff;
 use crate::timediff::show_time;
@@ -38,13 +39,21 @@ struct Args {
 //     database.persons
 // }
 
+fn split_and_parse(s: &str) -> Result<(u32, u32), ParseIntError> {
+    let parts: Vec<&str> = s.split(':').collect();
+    let h = parts[0].parse::<u32>()?;
+    let m = parts[1].parse::<u32>()?;
+    Ok((h, m))
+}
+
 
 fn main() {
     let args = Args::parse();
 
     match args.command.as_str() {
         "timediff" => {
-            show_time(args.pattern.as_str());
+            let (hour, minutes) = split_and_parse(args.pattern.as_str()).unwrap();
+            show_time(hour, minutes);
         }
         _ => println!("No command has found with name {}", args.command)
     }
